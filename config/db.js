@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-const dbName = process.env.DB_NAME;
+const dbName = process.env.DB_NAME || 'pokedex';
 export let db;
 export let userCollection;
 export let pokemonCollection;
