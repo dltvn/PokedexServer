@@ -11,7 +11,7 @@ export function config(app) {
 app.use(
   session({
     store: new FileStore({
-      path: './sessions',
+      path: '/tmp/sessions',
       secret: process.env.SESSION_SECRET,
       retries: 0, 
     }),
