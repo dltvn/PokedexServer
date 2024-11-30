@@ -3,26 +3,27 @@ import { userCollection } from "../config/db.js";
 import { ObjectId } from "mongodb";
 import session from "express-session";
 import passport from "passport";
-import FileStoreModule from 'session-file-store';
+import MongoStore from 'connect-mongo';
+//import FileStoreModule from 'session-file-store';
 
-const FileStore = FileStoreModule(session);
+//const FileStore = FileStoreModule(session);
 
 export function config(app) {
-app.use(
-  session({
-    store: new FileStore({
-      path: './sessions', // 세션 파일 저장 경로
-      secret: 'your-secret-key', // 세션 암호화 키
-      retries: 0, // 세션 파일 읽기 실패 시 재시도 횟수
-    }),
-    secret: 'your-secret-key', // 세션 암호화 키
-    resave: false, // 세션이 변경되지 않아도 저장 방지
-    saveUninitialized: false, // 초기화되지 않은 세션 저장 방지
-    cookie: {
-      maxAge: 1000 * 60 * 60, // 세션 만료 시간 (1시간)
-    },
-  })
-);
+  app.use(
+    session({
+      store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI,
+        collectionName: 'sessions',
+        ttl: 60 * 60, // Session expiration time in seconds (1 hour)
+      }),
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 1000 * 60 * 60, // Cookie expiration time in milliseconds (1 hour)
+      },
+    })
+  );
   app.use(passport.initialize());
   app.use(passport.session());
 
