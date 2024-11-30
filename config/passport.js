@@ -14,13 +14,13 @@ export function config(app) {
       store: MongoStore.create({
         mongoUrl: process.env.MONGODB_URI,
         collectionName: 'sessions',
-        ttl: 60 * 60, // Session expiration time in seconds (1 hour)
+        ttl: 60 * 60 * 48, // Session expiration time in seconds (2 days)
       }),
       secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {
-        maxAge: 1000 * 60 * 60, // Cookie expiration time in milliseconds (1 hour)
+        maxAge: 1000 * 60 * 60 * 48, // Cookie expiration time in milliseconds (2 days)
       },
     })
   );
@@ -54,9 +54,9 @@ export function config(app) {
             // Fetch the newly created user using the insertedId
             user = await userCollection.findOne({ _id: result.insertedId });
           } else {
-            console.log("헌유저");
           }
-          console.log("done한다고 씨발");
+          console.log('Server Timezone:', Intl.DateTimeFormat().resolvedOptions().timeZone);
+          console.log('Server Time:', new Date().toString());
           done(null, user); // Pass the user object to Passport
         } catch (err) {
           console.error("Error in Google Strategy:", err);
