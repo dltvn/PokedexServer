@@ -21,6 +21,9 @@ export function config(app) {
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 48, // Cookie expiration time in milliseconds (2 days)
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        sameSite: 'lax',
       },
     })
   );
