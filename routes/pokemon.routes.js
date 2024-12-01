@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { pokemonCollection, userPokemonCollection } from "../config/db.js";
 import { ObjectId } from "mongodb";
-import { ensureAuthenticated } from "../middlewares/auth.middleware.js";
+import { ensureAuthenticated, authenticate } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -53,11 +53,11 @@ router.get("/users", ensureAuthenticated, async (req, res) => {
 /**
  * get id lists of the pokemons a user owns
  */
-router.get("/users/ids", async (req, res) => {
+router.get("/users/ids", authenticate, async (req, res) => {
   if (!req.user) {
     return res.status(200).json({ pokemonIds: [] });
   }
-  const userId = req.user._id;
+  const userId = req.user.id;
 
   const pokemons = await userPokemonCollection
     .find({ userId: new ObjectId(userId) })
