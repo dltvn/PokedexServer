@@ -1,45 +1,39 @@
 import { Router } from 'express';
-import passport from 'passport';
 import axios from 'axios';
 import jwt from "jsonwebtoken";
 import { userCollection } from "../config/db.js";
-
+import { authenticate } from "../middlewares/auth.middleware.js";
+import { ObjectId } from "mongodb";
 const router = Router();
 
 /**
- * sign in/sign up, logic is in passport.js
+ * user info
  */
-router.get(
-  '/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
+router.get('/', authenticate, async (req, res) => {
+  try {
+    const user = await userCollection.findOne({ _id: new ObjectId(req.userId) });
 
-/**
- * after successful sign in from google
- */
-router.get(
-  '/callback/google',
-  passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    // for test
-    res.redirect(`${process.env.REACT_BASE_URL}/pokedex`);
+    if (!user) {
+      return res.status(200).json({ error: "User not found" });
+    }
 
+    res.json({user});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-);
+});
+
 
 /**
  * sign out
  */
 router.get('/signout', (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).send('sign out failed');
-    }
-    res.redirect('/');
-  });
 });
 
-
+/**
+ * sign in
+ */
 router.post("/google", async (req, res) => {
   const { idToken } = req.body;
 
@@ -50,7 +44,7 @@ router.post("/google", async (req, res) => {
   try {
     // Verify the ID Token with Google's tokeninfo API
     const response = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
-    const { email, name } = response.data;
+    const { email, name, picture } = response.data;
 
     if (!email) {
       return res.status(400).json({ error: "Email not found in token" });
@@ -63,6 +57,7 @@ router.post("/google", async (req, res) => {
       const newUser = {
         email,
         name,
+        picture,
         createdAt: new Date(),
       };
 

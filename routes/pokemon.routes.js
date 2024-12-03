@@ -10,7 +10,6 @@ const router = Router();
  */
 router.get("/users", ensureAuthenticated, async (req, res) => {
   const userId = req.userId;
-  console.log(userId)
 
   try {
     // Aggregation pipeline to join `userPokemonCollection` with `pokemonsCollection`
@@ -41,7 +40,6 @@ router.get("/users", ensureAuthenticated, async (req, res) => {
         },
       ])
       .toArray();
-    console.log(pokemons)
 
     res.status(200).json({ pokemons });
   } catch (error) {
