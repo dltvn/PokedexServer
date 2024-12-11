@@ -55,7 +55,7 @@ http://localhost:3000
 ## Folder Structure
 
 ```
-project-directory
+pokedexserver
 ├── index.js          # Entry point of the server
 ├── .env              # Environment variables
 ├── package.json      # Project configuration and scripts
