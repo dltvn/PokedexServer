@@ -12,34 +12,36 @@ router.get("/users", ensureAuthenticated, async (req, res) => {
   const userId = req.userId;
 
   try {
-    // Aggregation pipeline to join `userPokemonCollection` with `pokemonsCollection`
     const pokemons = await userPokemonCollection
-      .aggregate([
-        {
-          $match: { userId: new ObjectId(userId) }, // Match user's Pokémon
-        },
-        {
-          $lookup: {
-            from: "pokemons", // Target collection for the join
-            localField: "pokemonId", // Field in `userPokemonCollection`
-            foreignField: "id", // Field in `pokemons` collection
-            as: "pokemon", // Rename the joined field to 'pokemon'
-          },
-        },
-        {
-          $unwind: "$pokemon", // Flatten the `pokemon` array
-        },
-        {
-          $project: {
-            _id: 0, // Exclude the `_id` from the result
-            pokemonId: 1,
-            userId: 1,
-            createdAt: 1,
-            pokemon: 1,
-          },
-        },
-      ])
-      .toArray();
+  .aggregate([
+    {
+      $match: { userId: new ObjectId(userId) },
+    },
+    {
+      $lookup: {
+        from: "pokemons",
+        localField: "pokemonId",
+        foreignField: "id",
+        as: "pokemon",
+      },
+    },
+    {
+      $unwind: "$pokemon",
+    },
+    {
+      $sort: { pokemonId: 1 },
+    },
+    {
+      $project: {
+        _id: 0,
+        pokemonId: 1,
+        userId: 1,
+        createdAt: 1,
+        pokemon: 1,
+      },
+    },
+  ])
+  .toArray();
 
     res.status(200).json({ pokemons });
   } catch (error) {
