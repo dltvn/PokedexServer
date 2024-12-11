@@ -70,6 +70,14 @@ pokedexserver
 - Use [Google Cloud Console](https://console.cloud.google.com/) to manage your `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
 - For frontend integration, ensure the `REACT_BASE_URL` matches your React application base URL.
 
+  ## Authors
+
+- [@bellella](https://github.com/bellella)
+- [@dltvn](https://github.com/dltvn)
+- [@peggy8337](https://github.com/peggy8337)
+- [@jinal patel](https://github.com/jinal108)
+- [@Saaram](https://github.com/bellella)
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
